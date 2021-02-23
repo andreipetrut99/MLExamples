@@ -88,10 +88,11 @@ vectorizer = CountVectorizer()
 X_train = vectorizer.fit_transform(clean_train_tweets)
 X_test = vectorizer.transform(clean_test_tweets)
 
-model = MultinomialNB(alpha=1)
+model = MultinomialNB(alpha=0.2)
 model.fit(X_train, y_train)
 
 predictions = model.predict(X_test)
 
 print("Accuracy score of test {}".format(accuracy_score(y_test, predictions)))
 print(classification_report(y_test, predictions))
+
