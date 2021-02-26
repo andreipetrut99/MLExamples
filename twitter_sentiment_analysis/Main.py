@@ -37,6 +37,7 @@ def getdata():
 
 tweets_train, y_train, tweets_test, y_test = getdata()
 
+
 # # reduce len of words and remove '@user'
 # tw_tokenizer = TweetTokenizer(reduce_len=True, strip_handles=True)
 # tokens_train = [tw_tokenizer.tokenize(tweet) for tweet in tweets_train]
@@ -48,17 +49,18 @@ tweets_train, y_train, tweets_test, y_test = getdata()
 #
 
 def clean_data(tweets):
-    clean_tweets = [] # final tweets
+    clean_tweets = []  # final tweets
     size = tweets.shape[0]
     ps = PorterStemmer()
     # taking every tweet and 'clean' it
     for i in range(0, size):
-        tweet = re.sub(pattern='[^a-zA-Z]', repl=' ', string=tweets[i]) # taking each tweet
-        tweet = re.sub(pattern='user', repl='', string=tweet) # removing its @user
-        tweet = tweet.lower() # lowercase
-        tweet_words = tweet.split() # split tweet and get its words
-        tweet_words = [ps.stem(word) for word in tweet_words if word not in STOP_WORDS] # stem each word and filter stopwords
-        tweet = ' '.join(tweet_words) # build the tweet back again
+        tweet = re.sub(pattern='[^a-zA-Z]', repl=' ', string=tweets[i])  # taking each tweet
+        tweet = re.sub(pattern='user', repl='', string=tweet)  # removing its @user
+        tweet = tweet.lower()  # lowercase
+        tweet_words = tweet.split()  # split tweet and get its words
+        tweet_words = [ps.stem(word) for word in tweet_words if
+                       word not in STOP_WORDS]  # stem each word and filter stopwords
+        tweet = ' '.join(tweet_words)  # build the tweet back again
         clean_tweets.append(tweet)
     return clean_tweets
 
@@ -74,7 +76,6 @@ for i in range(0, size):
         normal_words.append(clean_train_tweets[i])
     else:
         racist_words.append(clean_train_tweets[i])
-
 
 # normal_words = ' '.join([text for text in normal_words])
 # racist_words = ' '.join([text for text in racist_words])
@@ -95,4 +96,3 @@ predictions = model.predict(X_test)
 
 print("Accuracy score of test {}".format(accuracy_score(y_test, predictions)))
 print(classification_report(y_test, predictions))
-
