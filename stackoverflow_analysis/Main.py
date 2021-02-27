@@ -24,7 +24,7 @@ def clean_data(text_arr):
         # cleantext = str(text_arr[i])
         cleantext = cleantext.lower()
         cleantext_words = cleantext.split() # separare cuvinte
-        cleantext_words = [ps.stem(word) for word in cleantext_words if word not in STOP_WORDS] # stem + filtrare stop_words
+        cleantext_words = [ ps.stem(word) for word in cleantext_words if word not in STOP_WORDS] # stem + filtrare stop_words
         cleantext = ' '.join(cleantext_words) # unire cuvinte
         clean.append(cleantext) # adaugare la lista finala
 
@@ -50,9 +50,24 @@ final_strings = [tags_c[i]
 # df_tfidf.sort_values(by=['tf_idf_scores'])
 # print(df_tfidf)
 
-count_vectorizer = CountVectorizer(analyzer='word', ngram_range=(1,3))
+# gasire frecventa cuvinte cu countvectorizer:
+
+
+def get_top_n_words(corpus, n=None):
+    vec = CountVectorizer(ngram_range=(1,3)).fit(corpus)
+    bag_of_words = vec.transform(corpus)
+    sum_words = bag_of_words.sum(axis=0)
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq = sorted(words_freq, key=lambda x: x[1], reverse=True)
+    return words_freq[:n]
+
+
+topics = []
 for i in range(0, len(final_strings)):
-    matrix = count_vectorizer.fit_transform(final_strings[i])
-    df_c = pd.DataFrame(matrix.sum(axis=0).T,
-                        index=count_vectorizer.get_feature_names(),
-                        columns=['freq'].sort_values(by='freq', ascending=False).plot(kind='bar', title='TITLe'))
+    words = get_top_n_words([final_strings[i]], 3)
+    topics.append(str(words[0] + words[1] + words[2]))
+
+df['topics'] = topics
+
+print(df.head(5))
+
